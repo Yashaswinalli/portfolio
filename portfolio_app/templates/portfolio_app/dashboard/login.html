@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Login — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Space Mono',monospace;
+  background:#050510;
+  color:#e8e8f0;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+canvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.5;}
+.login-wrap{
+  position:relative;z-index:1;
+  width:100%;max-width:420px;
+  padding:1rem;
+  animation:fadeUp 0.7s cubic-bezier(0.23,1,0.32,1) both;
+}
+.login-card{
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(0,245,196,0.2);
+  border-radius:20px;
+  padding:2.5rem;
+  backdrop-filter:blur(20px);
+  box-shadow:0 0 60px rgba(0,245,196,0.08),0 0 120px rgba(124,58,237,0.06);
+}
+.login-logo{
+  text-align:center;
+  margin-bottom:2rem;
+}
+.logo-icon{
+  width:60px;height:60px;
+  border-radius:16px;
+  background:linear-gradient(135deg,#00f5c4,#7c3aed);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;
+  margin:0 auto 1rem;
+  box-shadow:0 0 30px rgba(0,245,196,0.3);
+  animation:pulse 2s infinite;
+}
+.login-title{
+  font-family:'Syne',sans-serif;
+  font-size:1.5rem;font-weight:800;
+  color:#fff;
+  margin-bottom:0.3rem;
+}
+.login-sub{
+  font-size:0.65rem;color:#666688;
+  letter-spacing:0.15em;text-transform:uppercase;
+}
+.form-group{margin-bottom:1.25rem;}
+.form-label{
+  display:block;
+  font-size:0.62rem;color:#00f5c4;
+  letter-spacing:0.15em;text-transform:uppercase;
+  margin-bottom:0.5rem;
+}
+.form-input{
+  width:100%;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(0,245,196,0.15);
+  border-radius:10px;
+  padding:0.8rem 1rem;
+  color:#e8e8f0;
+  font-family:'Space Mono',monospace;
+  font-size:0.85rem;
+  outline:none;
+  transition:border-color 0.3s,box-shadow 0.3s;
+}
+.form-input:focus{
+  border-color:#00f5c4;
+  box-shadow:0 0 0 3px rgba(0,245,196,0.1);
+}
+.form-input::placeholder{color:#444466;}
+.login-btn{
+  width:100%;
+  background:linear-gradient(135deg,#00f5c4,#00c49a);
+  color:#050510;
+  border:none;
+  border-radius:10px;
+  padding:0.9rem;
+  font-family:'Space Mono',monospace;
+  font-size:0.8rem;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  cursor:pointer;
+  margin-top:0.5rem;
+  transition:all 0.3s;
+  position:relative;overflow:hidden;
+}
+.login-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 30px rgba(0,245,196,0.4);
+}
+.login-btn:active{transform:translateY(0);}
+.error-msg{
+  background:rgba(255,0,80,0.1);
+  border:1px solid rgba(255,0,80,0.3);
+  border-radius:8px;
+  padding:0.75rem 1rem;
+  color:#ff4466;
+  font-size:0.72rem;
+  letter-spacing:0.05em;
+  margin-bottom:1.25rem;
+  display:flex;align-items:center;gap:0.5rem;
+}
+.back-link{
+  display:block;text-align:center;
+  margin-top:1.5rem;
+  font-size:0.65rem;color:#444466;
+  letter-spacing:0.1em;text-transform:uppercase;
+  text-decoration:none;
+  transition:color 0.3s;
+}
+.back-link:hover{color:#00f5c4;}
+.terminal-hint{
+  margin-top:2rem;
+  padding:0.75rem 1rem;
+  background:rgba(0,0,0,0.3);
+  border-radius:8px;
+  border-left:2px solid #00f5c4;
+  font-size:0.65rem;color:#444466;
+  letter-spacing:0.05em;
+}
+.terminal-hint span{color:#00f5c4;}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(30px);}
+  to{opacity:1;transform:translateY(0);}
+}
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 20px rgba(0,245,196,0.3);}
+  50%{box-shadow:0 0 40px rgba(0,245,196,0.6);}
+}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="logo-icon">⚡</div>
+      <p class="login-title">Portfolio Admin</p>
+      <p class="login-sub">Secure Access Only</p>
+    </div>
+
+    {% if error %}
+    <div class="error-msg">⚠ {{ error }}</div>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input type="text" name="username" class="form-input" placeholder="Enter username" required autofocus value="{{ username|default:'' }}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-input" placeholder="Enter password" required>
+      </div>
+      <button type="submit" class="login-btn">Access Dashboard →</button>
+    </form>
+
+    <a href="/" class="back-link">← Back to Portfolio</a>
+
+    <div class="terminal-hint">
+      <span>$</span> Only superusers can access this panel.
+    </div>
+  </div>
+</div>
+
+<script>
+const c=document.getElementById('c'),ctx=c.getContext('2d');
+let W,H,pts=[];
+function resize(){W=c.width=innerWidth;H=c.height=innerHeight;}
+resize();window.addEventListener('resize',resize);
+class P{
+  constructor(){this.reset();}
+  reset(){
+    this.x=Math.random()*W;this.y=Math.random()*H;
+    this.vx=(Math.random()-0.5)*0.4;this.vy=(Math.random()-0.5)*0.4;
+    this.r=Math.random()*1.5+0.5;this.o=Math.random()*0.4+0.1;
+  }
+  update(){
+    this.x+=this.vx;this.y+=this.vy;
+    if(this.x<0||this.x>W||this.y<0||this.y>H)this.reset();
+  }
+  draw(){
+    ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(0,245,196,${this.o})`;ctx.fill();
+  }
+}
+for(let i=0;i<80;i++)pts.push(new P());
+function loop(){
+  ctx.clearRect(0,0,W,H);
+  pts.forEach(p=>{p.update();p.draw();});
+  requestAnimationFrame(loop);
+}
+loop();
+</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+{% extends "admin/index.html" %}
+{% load i18n %}
+
+{% block content %}
+<div style="margin-bottom:2rem;">
+  <!-- Welcome Banner -->
+  <div style="
+    background:linear-gradient(135deg,rgba(0,245,196,0.08),rgba(124,58,237,0.08));
+    border:1px solid rgba(0,245,196,0.18);
+    border-radius:16px;
+    padding:1.5rem 2rem;
+    margin-bottom:1.5rem;
+    display:flex;align-items:center;justify-content:space-between;
+    flex-wrap:wrap;gap:1rem;
+  ">
+    <div>
+      <h2 style="
+        font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;
+        color:#e0e0f0;margin:0 0 0.3rem;
+      ">Welcome back, <span style="color:#00f5c4;">{{ user.username }}</span> 👋</h2>
+      <p style="
+        font-family:'Space Mono',monospace;font-size:0.68rem;
+        color:#7777aa;margin:0;letter-spacing:0.08em;
+      ">Manage your portfolio content from here</p>
+    </div>
+    <a href="/" target="_blank" style="
+      background:rgba(0,245,196,0.1);border:1px solid rgba(0,245,196,0.3);
+      color:#00f5c4;border-radius:8px;padding:0.6rem 1.2rem;
+      font-family:'Space Mono',monospace;font-size:0.7rem;
+      text-decoration:none;letter-spacing:0.08em;
+      transition:all 0.3s;
+    ">↗ View Live Portfolio</a>
+  </div>
+
+  <!-- Quick Stats -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;margin-bottom:2rem;">
+    {% for section_stat in quick_stats %}
+    <div style="
+      background:rgba(255,255,255,0.03);
+      border:1px solid rgba(0,245,196,0.12);
+      border-radius:12px;padding:1.1rem;
+      transition:border-color 0.3s;
+    ">
+      <div style="font-size:1.5rem;margin-bottom:0.4rem;">{{ section_stat.icon }}</div>
+      <div style="font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:#00f5c4;line-height:1;">{{ section_stat.count }}</div>
+      <div style="font-family:'Space Mono',monospace;font-size:0.62rem;color:#7777aa;margin-top:0.2rem;letter-spacing:0.08em;text-transform:uppercase;">{{ section_stat.label }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{{ block.super }}
+{% endblock %}

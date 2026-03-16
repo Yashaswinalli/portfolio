@@ -1,0 +1,401 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }} | Yashaswi Portfolio Admin{% endblock %}
+
+{% block branding %}
+<div id="site-name">
+  <a href="{% url 'admin:index' %}" style="display:flex;align-items:center;gap:0.75rem;text-decoration:none;">
+    <div style="
+      width:36px;height:36px;border-radius:10px;
+      background:linear-gradient(135deg,#00f5c4,#7c3aed);
+      display:flex;align-items:center;justify-content:center;
+      font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:800;color:#050510;
+    ">NY</div>
+    <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;color:#00f5c4;letter-spacing:-0.01em;">
+      Portfolio Admin
+    </span>
+  </a>
+</div>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ── RESET DJANGO ADMIN ── */
+:root {
+  --accent: #00f5c4;
+  --accent2: #7c3aed;
+  --bg: #080818;
+  --bg2: #0d0d22;
+  --bg3: #11112a;
+  --card: rgba(255,255,255,0.04);
+  --border: rgba(0,245,196,0.12);
+  --text: #e0e0f0;
+  --muted: #7777aa;
+}
+
+body, #container {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+/* ── HEADER ── */
+#header {
+  background: rgba(8,8,24,0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid var(--border) !important;
+  padding: 0.75rem 1.5rem !important;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.4) !important;
+}
+#header a:link, #header a:visited, #header a:hover { color: var(--accent) !important; text-decoration: none; }
+#user-tools { font-family: 'Space Mono', monospace !important; font-size: 0.7rem !important; color: var(--muted) !important; }
+#user-tools a { color: var(--accent) !important; }
+#logout-form button {
+  background: none !important; border: 1px solid rgba(0,245,196,0.3) !important;
+  color: var(--accent) !important; padding: 0.3rem 0.75rem !important;
+  border-radius: 6px !important; font-family: 'Space Mono', monospace !important;
+  font-size: 0.65rem !important; cursor: pointer !important; letter-spacing: 0.08em !important;
+  transition: all 0.3s !important;
+}
+#logout-form button:hover { background: var(--accent) !important; color: #050510 !important; }
+
+/* ── BREADCRUMBS ── */
+.breadcrumbs {
+  background: var(--bg2) !important;
+  border-bottom: 1px solid var(--border) !important;
+  padding: 0.6rem 1.5rem !important;
+  font-family: 'Space Mono', monospace !important;
+  font-size: 0.68rem !important;
+  color: var(--muted) !important;
+  letter-spacing: 0.08em !important;
+}
+.breadcrumbs a { color: var(--accent) !important; text-decoration: none !important; }
+
+/* ── CONTENT AREA ── */
+#content { padding: 1.5rem !important; }
+#content-main { background: transparent !important; }
+
+/* ── DASHBOARD MODULES ── */
+.dashboard #content { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.module, .module table {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+}
+.module caption, .module h2, .module > h2 {
+  background: rgba(0,245,196,0.06) !important;
+  border-bottom: 1px solid var(--border) !important;
+  padding: 0.85rem 1.25rem !important;
+  font-family: 'Syne', sans-serif !important;
+  font-size: 0.85rem !important; font-weight: 700 !important;
+  color: var(--text) !important; letter-spacing: 0.02em !important;
+  text-transform: none !important;
+}
+.module caption a, .module h2 a { color: var(--accent) !important; }
+
+/* ── TABLES ── */
+#result_list, .results { width: 100% !important; }
+#result_list thead th {
+  background: rgba(0,245,196,0.06) !important;
+  border-bottom: 1px solid var(--border) !important;
+  color: var(--accent) !important;
+  font-family: 'Space Mono', monospace !important;
+  font-size: 0.65rem !important; letter-spacing: 0.1em !important;
+  text-transform: uppercase !important; padding: 0.75rem 1rem !important;
+}
+#result_list thead th a { color: var(--accent) !important; }
+#result_list thead th.sorted { background: rgba(0,245,196,0.1) !important; }
+#result_list tbody tr {
+  border-bottom: 1px solid rgba(255,255,255,0.04) !important;
+  transition: background 0.2s !important;
+}
+#result_list tbody tr:hover { background: rgba(0,245,196,0.04) !important; }
+#result_list tbody td {
+  color: var(--text) !important;
+  padding: 0.8rem 1rem !important;
+  font-size: 0.88rem !important;
+  border: none !important;
+  vertical-align: middle !important;
+}
+#result_list tbody td a { color: var(--accent) !important; text-decoration: none !important; }
+#result_list tbody td a:hover { text-decoration: underline !important; }
+#result_list tbody tr.selected { background: rgba(0,245,196,0.06) !important; }
+
+/* ── FORMS ── */
+.form-row { padding: 1rem 1.25rem !important; border-bottom: 1px solid rgba(255,255,255,0.04) !important; }
+.form-row:last-child { border-bottom: none !important; }
+label { color: var(--muted) !important; font-family: 'Space Mono', monospace !important; font-size: 0.72rem !important; letter-spacing: 0.08em !important; }
+.required label, label.required { color: var(--accent) !important; }
+input[type=text], input[type=email], input[type=url], input[type=number],
+input[type=password], textarea, select, .vTextField {
+  background: rgba(255,255,255,0.05) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  border-radius: 8px !important;
+  color: var(--text) !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 0.88rem !important;
+  padding: 0.6rem 0.85rem !important;
+  outline: none !important;
+  transition: border-color 0.3s, box-shadow 0.3s !important;
+  width: 100% !important; max-width: 600px !important;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px rgba(0,245,196,0.1) !important;
+}
+textarea { min-height: 100px !important; resize: vertical !important; }
+select {
+  appearance: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2300f5c4' d='M1 1l5 5 5-5'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 0.75rem center !important;
+  padding-right: 2rem !important;
+}
+.help { color: var(--muted) !important; font-size: 0.75rem !important; margin-top: 0.25rem !important; }
+.errorlist { color: #ff4466 !important; font-size: 0.8rem !important; list-style: none !important; }
+.errorlist li::before { content: '⚠ '; }
+
+/* ── FIELDSETS ── */
+fieldset {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 14px !important;
+  margin-bottom: 1.25rem !important;
+  overflow: hidden !important;
+}
+fieldset h2 {
+  background: rgba(0,245,196,0.06) !important;
+  border-bottom: 1px solid var(--border) !important;
+  padding: 0.85rem 1.25rem !important;
+  font-family: 'Syne', sans-serif !important;
+  font-size: 0.9rem !important; font-weight: 700 !important;
+  color: var(--text) !important; letter-spacing: 0.02em !important;
+  margin: 0 !important;
+}
+
+/* ── SUBMIT ROW ── */
+.submit-row {
+  background: rgba(0,0,0,0.3) !important;
+  border-top: 1px solid var(--border) !important;
+  border-radius: 0 0 14px 14px !important;
+  padding: 1rem 1.25rem !important;
+  display: flex !important; gap: 0.75rem !important;
+  flex-wrap: wrap !important;
+}
+.submit-row input[type=submit],
+.submit-row button,
+.default { 
+  background: linear-gradient(135deg, #00f5c4, #00c49a) !important;
+  color: #050510 !important;
+  border: none !important; border-radius: 8px !important;
+  padding: 0.7rem 1.5rem !important;
+  font-family: 'Space Mono', monospace !important;
+  font-size: 0.75rem !important; font-weight: 700 !important;
+  letter-spacing: 0.08em !important; text-transform: uppercase !important;
+  cursor: pointer !important;
+  transition: all 0.3s !important;
+}
+.submit-row input[type=submit]:hover,
+.submit-row button:hover { transform: translateY(-2px) !important; box-shadow: 0 6px 20px rgba(0,245,196,0.35) !important; }
+.submit-row .deletelink,
+.deletelink {
+  background: rgba(255,0,60,0.1) !important;
+  border: 1px solid rgba(255,0,60,0.3) !important;
+  color: #ff4466 !important; border-radius: 8px !important;
+  padding: 0.7rem 1.5rem !important;
+  font-family: 'Space Mono', monospace !important;
+  font-size: 0.75rem !important; text-decoration: none !important;
+  transition: all 0.3s !important;
+  display: inline-block !important;
+}
+.deletelink:hover { background: rgba(255,0,60,0.2) !important; }
+.submit-row a.closelink {
+  background: rgba(255,255,255,0.05) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  color: var(--muted) !important; border-radius: 8px !important;
+  padding: 0.7rem 1.5rem !important;
+  font-family: 'Space Mono', monospace !important;
+  font-size: 0.75rem !important; text-decoration: none !important;
+}
+
+/* ── ACTION BAR ── */
+.actions {
+  background: rgba(0,245,196,0.04) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 10px !important;
+  padding: 0.6rem 1rem !important;
+  margin-bottom: 1rem !important;
+  display: flex !important; align-items: center !important; gap: 0.75rem !important;
+}
+.actions label { color: var(--muted) !important; }
+.actions select {
+  background: var(--bg3) !important;
+  max-width: 250px !important;
+}
+.actions button {
+  background: var(--accent) !important;
+  color: #050510 !important;
+  border: none !important; border-radius: 6px !important;
+  padding: 0.4rem 1rem !important;
+  font-family: 'Space Mono', monospace !important;
+  font-size: 0.7rem !important; font-weight: 700 !important;
+  cursor: pointer !important;
+}
+
+/* ── PAGINATION ── */
+.paginator {
+  font-family: 'Space Mono', monospace !important;
+  font-size: 0.72rem !important; color: var(--muted) !important;
+  padding: 0.75rem 0 !important;
+}
+.paginator a, .paginator .this-page {
+  display: inline-flex !important; align-items: center !important; justify-content: center !important;
+  width: 32px !important; height: 32px !important; border-radius: 7px !important;
+  text-decoration: none !important;
+}
+.paginator a { border: 1px solid var(--border) !important; color: var(--text) !important; transition: all 0.2s !important; }
+.paginator a:hover { border-color: var(--accent) !important; color: var(--accent) !important; }
+.paginator .this-page { background: var(--accent) !important; color: #050510 !important; font-weight: 700 !important; }
+
+/* ── SIDEBAR / FILTERS ── */
+#changelist-filter {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 14px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+#changelist-filter h2 {
+  background: rgba(0,245,196,0.06) !important;
+  border-bottom: 1px solid var(--border) !important;
+  padding: 0.85rem 1.25rem !important;
+  font-family: 'Syne', sans-serif !important;
+  font-size: 0.85rem !important; color: var(--text) !important;
+  margin: 0 !important;
+}
+#changelist-filter h3 {
+  padding: 0.75rem 1.25rem 0.25rem !important;
+  font-family: 'Space Mono', monospace !important;
+  font-size: 0.65rem !important; color: var(--accent) !important;
+  letter-spacing: 0.1em !important; text-transform: uppercase !important;
+  margin: 0 !important;
+}
+#changelist-filter ul { list-style: none !important; padding: 0 0.75rem 0.75rem !important; }
+#changelist-filter li { padding: 0.15rem 0 !important; }
+#changelist-filter li a, #changelist-filter li.selected a {
+  color: var(--muted) !important; text-decoration: none !important;
+  font-size: 0.82rem !important; padding: 0.3rem 0.5rem !important;
+  border-radius: 6px !important; display: block !important;
+  transition: all 0.2s !important;
+}
+#changelist-filter li a:hover { background: rgba(0,245,196,0.06) !important; color: var(--accent) !important; }
+#changelist-filter li.selected > a { color: var(--accent) !important; font-weight: 700 !important; }
+
+/* ── OBJECT TOOLS ── */
+.object-tools { margin-bottom: 1rem !important; display: flex !important; gap: 0.5rem !important; justify-content: flex-end !important; }
+.object-tools a {
+  background: rgba(0,245,196,0.08) !important;
+  border: 1px solid rgba(0,245,196,0.25) !important;
+  border-radius: 8px !important;
+  color: var(--accent) !important;
+  font-family: 'Space Mono', monospace !important;
+  font-size: 0.65rem !important; padding: 0.45rem 1rem !important;
+  text-decoration: none !important; letter-spacing: 0.08em !important;
+  text-transform: uppercase !important; transition: all 0.2s !important;
+}
+.object-tools a:hover { background: rgba(0,245,196,0.15) !important; transform: translateY(-1px) !important; }
+.object-tools a.addlink::before { content: '+ '; }
+
+/* ── INLINE ADMIN ── */
+.inline-group {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 14px !important;
+  margin-top: 1.25rem !important;
+  overflow: hidden !important;
+}
+.inline-group h2 {
+  background: rgba(0,245,196,0.06) !important;
+  border-bottom: 1px solid var(--border) !important;
+  padding: 0.85rem 1.25rem !important;
+  font-family: 'Syne', sans-serif !important;
+  font-size: 0.9rem !important; color: var(--text) !important;
+  margin: 0 !important;
+}
+.inline-related { border-bottom: 1px solid rgba(255,255,255,0.04) !important; padding: 1rem 1.25rem !important; }
+.add-row a {
+  color: var(--accent) !important; font-size: 0.8rem !important;
+  font-family: 'Space Mono', monospace !important;
+  text-decoration: none !important;
+}
+.add-row td { padding: 0.75rem 1.25rem !important; }
+.delete-row a { color: #ff4466 !important; font-size: 0.8rem !important; }
+
+/* ── MESSAGES ── */
+.messagelist { list-style: none !important; margin: 0 0 1rem !important; }
+.messagelist li {
+  padding: 0.75rem 1.25rem !important; border-radius: 10px !important;
+  font-family: 'Space Mono', monospace !important; font-size: 0.78rem !important;
+  margin-bottom: 0.5rem !important; letter-spacing: 0.04em !important;
+}
+.messagelist li.success { background: rgba(0,245,196,0.1) !important; border: 1px solid rgba(0,245,196,0.3) !important; color: #00f5c4 !important; }
+.messagelist li.warning { background: rgba(245,158,11,0.1) !important; border: 1px solid rgba(245,158,11,0.3) !important; color: #f59e0b !important; }
+.messagelist li.error { background: rgba(255,0,60,0.1) !important; border: 1px solid rgba(255,0,60,0.3) !important; color: #ff4466 !important; }
+
+/* ── CHECKBOX ── */
+input[type=checkbox] {
+  width: 16px !important; height: 16px !important;
+  accent-color: var(--accent) !important;
+  cursor: pointer !important;
+}
+input[type=checkbox]#action-toggle { cursor: pointer !important; }
+
+/* ── RECENT ACTIONS ── */
+#recent-actions-list { list-style: none !important; }
+#recent-actions-list li {
+  padding: 0.6rem 1.25rem !important;
+  border-bottom: 1px solid rgba(255,255,255,0.04) !important;
+  font-size: 0.82rem !important;
+}
+#recent-actions-list .mini { color: var(--muted) !important; font-size: 0.72rem !important; font-family: 'Space Mono', monospace !important; }
+#recent-actions-list a { color: var(--accent) !important; text-decoration: none !important; }
+.addlink { color: #00f5c4 !important; }
+.changelink { color: var(--accent) !important; }
+.deletelink-box { color: #ff4466 !important; }
+
+/* ── MISC ── */
+a:link, a:visited { color: var(--accent) !important; }
+a:hover { color: #7c3aed !important; }
+h1 { font-family: 'Syne', sans-serif !important; font-weight: 800 !important; color: var(--text) !important; font-size: 1.4rem !important; margin-bottom: 1rem !important; }
+p { color: var(--muted) !important; font-size: 0.88rem !important; line-height: 1.6 !important; }
+.colMS { width: 220px !important; }
+
+/* Calendar / date picker overrides */
+.calendarbox, .clockbox { background: var(--bg2) !important; border: 1px solid var(--border) !important; border-radius: 10px !important; }
+.module .calendar td a:hover { background: var(--accent) !important; color: #050510 !important; }
+
+/* Dashboard app list */
+.app-portfolio_app .section { border-color: rgba(0,245,196,0.2) !important; }
+</style>
+{% endblock %}
+
+{% block footer %}
+<div id="footer" style="
+  text-align:center;
+  padding:1rem;
+  font-family:'Space Mono',monospace;
+  font-size:0.62rem;
+  color:#333355;
+  border-top:1px solid rgba(0,245,196,0.08);
+  letter-spacing:0.1em;
+">
+  <a href="/" style="color:#00f5c4;text-decoration:none;">← View Portfolio</a>
+  &nbsp;·&nbsp;
+  Yashaswi Portfolio Admin &nbsp;·&nbsp; Django {{ django_version }}
+</div>
+{% endblock %}

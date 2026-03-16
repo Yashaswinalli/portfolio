@@ -1,0 +1,58 @@
+# ═══════════════════════════════════════════════════════
+#  Yashaswi Portfolio — .gitignore
+# ═══════════════════════════════════════════════════════
+
+# ── Environment & Secrets ──
+.env
+*.env.local
+
+# ── Python ──
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+*.egg
+dist/
+build/
+pip-wheel-metadata/
+
+# ── Virtual Environment ──
+venv/
+env/
+.venv/
+ENV/
+
+# ── Django ──
+db.sqlite3
+db.sqlite3-journal
+*.log
+media/
+staticfiles/
+static_collected/
+
+# ── IDE / Editor ──
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# ── OS Files ──
+.DS_Store
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+ehthumbs_vista.db
+
+# ── Misc ──
+*.bak
+*.tmp
+*.temp
+node_modules/
